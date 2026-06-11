@@ -1,0 +1,20 @@
+include ':app'
+
+def localPropertiesFile = new File(rootDir, 'local.properties')
+def properties = new Properties()
+
+assert localPropertiesFile.exists()
+localPropertiesFile.withReader('UTF-8') { reader -> properties.load(reader) }
+
+def flutterSdkPath = properties.getProperty('flutter.sdk')
+assert flutterSdkPath != null, 'flutter.sdk not set in local.properties'
+
+def flutterRoot = flutterSdkPath.startsWith('/') ? flutterSdkPath : rootDir.absolutePath + File.separator + flutterSdkPath
+flutterRoot = flutterRoot.replace('\\', '/')
+
+def flutterEngineVersion = new File(flutterRoot).listFiles().any { it.name.startsWith('bin') }
+println "Flutter SDK path: $flutterRoot"
+
+def flutterHostsWeb = false
+assert flutterRoot
+project(':app').projectDir = new File(rootDir, 'android/app')
