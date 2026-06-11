@@ -41,7 +41,7 @@ class NetworkManager extends ChangeNotifier {
   void _handleNewClient(Socket socket) {
     final clientId = '${socket.remoteAddress.address}:${socket.remotePort}';
     _clientSockets[clientId] = socket;
-    socket.transform(utf8.decoder).listen(
+    socket.cast<List<int>>().transform(utf8.decoder).listen(
       (data) => _handleRawData(data),
       onDone: () {
         _clientSockets.remove(clientId);
@@ -57,7 +57,7 @@ class NetworkManager extends ChangeNotifier {
     try {
       _hostSocket = await Socket.connect(hostIp, kGamePort,
           timeout: const Duration(seconds: 10));
-      _hostSocket!.transform(utf8.decoder).listen(
+      _hostSocket!.cast<List<int>>().transform(utf8.decoder).listen(
         (data) => _handleRawData(data),
         onDone: _onDisconnected,
         onError: (e) => debugPrint('خطای اتصال: $e'),
